@@ -1,24 +1,580 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>transfer-vault</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+<!DOCTYPE html><html lang="ar" dir="rtl"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>منصة DHS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.2/plyr.css" />
+  <!-- polyfills للأجهزة القديمة -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.2.8/es6-promise.auto.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.6.2/fetch.min.js"></script>
+  <!-- Babel لتحويل الكود ES6+ إلى ES5 على المتصفح -->
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+  <style>
+:root {
+  --primary: 221 83% 53%;
+  --magical: 280 85% 65%;
+  --teacher-border: 356 75% 75%;
+  --plyr-color-main: hsl(var(--primary));
+  --bg: 225 35% 14%;
+  --bg2: 225 35% 10%;
+  --text: 210 40% 98%;
+  --card: 225 30% 18%;
+  --border: 215 25% 27%;
+  /* Backward-compatible variables used across the CSS */
+  --bg-color: hsl(var(--bg));
+  --text-color: hsl(var(--text));
+  --card-color: hsl(var(--card));
+  --border-color: hsl(var(--border));
+  --bg-gradient: radial-gradient(1200px 600px at 70% -5%, hsl(170 80% 60% / 0.12), transparent 70%),
+                  linear-gradient(160deg, hsl(225 35% 14%) 0%, hsl(230 40% 10%) 40%, hsl(180 25% 12%) 100%);
+  /* Make header clearly different from buttons */
+  --header-bg: linear-gradient(135deg, hsl(276 72% 42%), hsl(258 70% 32%));
+}
+[data-theme="light"] {
+  --primary: 221 83% 56%;
+  --magical: 280 85% 55%;
+  --teacher-border: 356 75% 65%;
+  --plyr-color-main: hsl(var(--primary));
+  --bg: 0 0% 100%;
+  --bg2: 210 40% 98%;
+  --text: 222 47% 11%;
+  --card: 210 40% 98%;
+  --border: 214 32% 91%;
+  --bg-color: hsl(var(--bg));
+  --text-color: hsl(var(--text));
+  --card-color: hsl(var(--card));
+  --border-color: hsl(var(--border));
+  --bg-gradient: radial-gradient(1200px 600px at 30% -10%, hsl(180 60% 85% / 0.15), transparent 70%),
+                  linear-gradient(200deg, hsl(200 50% 97%) 0%, hsl(180 40% 94%) 40%, hsl(170 30% 96%) 100%);
+  --header-bg: linear-gradient(135deg, hsl(279 100% 92%), hsl(262 100% 88%));
+}
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Almarai', sans-serif; user-select: none; }
+    body { background: var(--bg-gradient); color: var(--text-color); line-height: 1.6; }
+    .page { display: none; padding: 2rem; max-width: 1200px; margin: 0 auto; }
+    .page.active { display: block; animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    header { background: var(--header-bg); padding: 1.25rem 2rem; min-height: 72px; display: flex; align-items: center; gap: 2rem; position: sticky; top: 0; z-index: 200; box-shadow: 0 6px 20px hsl(var(--primary) / 0.25); }
+    .site-title { 
+      color: hsl(var(--magical)); 
+      font-size: 2rem; 
+      cursor: pointer; 
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+      position: relative;
+      padding: 0.5rem 1.5rem;
+      border-radius: 15px;
+      background: linear-gradient(135deg, hsl(var(--magical) / 0.1), hsl(var(--magical) / 0.05));
+      border: 2px solid hsl(var(--magical) / 0.2);
+      backdrop-filter: blur(10px);
+      text-shadow: 0 2px 10px hsl(var(--magical) / 0.3);
+    }
+    .site-title:hover { 
+      transform: scale(1.05) translateY(-2px); 
+      box-shadow: 0 8px 25px hsl(var(--magical) / 0.4);
+      border-color: hsl(var(--magical) / 0.5);
+    }
+    .site-title:active { 
+      transform: scale(0.98) translateY(0px); 
+      transition: all 0.1s;
+    }
+    .search-container { flex-grow: 1; max-width: none; display: flex; gap: 0.75rem; align-items: stretch; }
+    #searchInput { width: 100%; height: 52px; padding: 0 1rem; border: 2px solid var(--border-color); border-radius: 10px; background: var(--card-color); color: var(--text-color); font-size: 1.05rem; }
+    #searchButton, #themeToggle { 
+      background: hsl(var(--primary)); 
+      color: #fff; 
+      border: none; 
+      border-radius: 10px; 
+      cursor: pointer; 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+      height: 52px; 
+      padding: 0 1.25rem; 
+      display: inline-flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 0.5rem; 
+      font-size: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    #searchButton::before, #themeToggle::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s;
+    }
+    #searchButton:hover::before, #themeToggle:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    #searchButton:hover, #themeToggle:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 8px 20px hsl(var(--magical) / 0.4);
+    }
+    #searchButton:active, #themeToggle:active {
+      transform: translateY(0px) scale(0.95);
+      transition: all 0.1s;
+    }
+    .teachers-grid { display: flex; overflow-x: auto; gap: 2rem; padding: 1rem 0; margin-top: 2rem; }
+    .teacher-card { 
+      background: var(--card-color); 
+      padding: 1.5rem; 
+      border-radius: 15px; 
+      min-width: 280px; 
+      cursor: pointer; 
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid hsl(var(--border));
+    }
+    .teacher-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, hsl(var(--magical) / 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+    .teacher-card:hover::before {
+      left: 100%;
+    }
+    .teacher-card:hover { 
+      transform: translateY(-8px) scale(1.02); 
+      box-shadow: 0 15px 35px hsl(var(--magical) / 0.2), 0 5px 15px rgba(0,0,0,0.1);
+      border-color: hsl(var(--magical) / 0.3);
+    }
+    .teacher-card:active {
+      transform: translateY(-4px) scale(1.01);
+      transition: all 0.1s;
+    }
+    .teacher-img { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 3px solid hsl(var(--teacher-border)); display: block; margin: 0 auto; box-shadow: 0 8px 25px hsl(var(--teacher-border) / 0.3); }
+    .teacher-name { margin: 1rem 0; text-align: center; font-size: 1.2rem; }
+    .classes-page { display: grid; gap: 2rem; }
+    .teacher-info { background: var(--card-color); padding: 1.5rem; border-radius: 10px; display: flex; align-items: center; gap: 1rem; }
+    .teacher-img-lg { width: 120px; height: 120px; border-radius: 50%; border: 3px solid hsl(var(--teacher-border)); object-fit: cover; box-shadow: 0 6px 20px hsl(var(--teacher-border) / 0.3); }
+    .back-button, .copy-button { background: hsl(var(--primary)); color: #fff; border: none; padding: 0.8rem 1.5rem; border-radius: 5px; cursor: pointer; transition: 0.3s; margin-bottom: 1rem; }
+    .copy-button { margin-top: 1rem; font-size: 1rem; }
+    .back-button:hover, .copy-button:hover { opacity: 0.9; }
+    .classes-list { display: grid; gap: 1.5rem; }
+    .class-card { background: var(--card-color); padding: 1rem; border-radius: 10px; cursor: pointer; }
+    .class-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-left: 4px solid hsl(var(--primary)); }
+    .lectures-list { display: none; gap: 0.8rem; margin-top: 1rem; padding-right: 1rem; }
+    .lecture-item { 
+      display: flex; 
+      align-items: center; 
+      justify-content: flex-start; 
+      gap: 0.75rem; 
+      padding: 0.75rem 1rem; 
+      background: var(--bg-color); 
+      border-radius: 8px; 
+      border-right: 3px solid hsl(var(--magical)); 
+      cursor: default; 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .lecture-item::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, hsl(var(--magical) / 0.08), transparent);
+      transition: right 0.5s ease;
+    }
+    .lecture-item:hover::after {
+      right: 100%;
+    }
+    .lecture-item:hover { 
+      background: hsl(var(--magical) / 0.12); 
+      transform: translateX(12px); 
+      box-shadow: 0 4px 15px hsl(var(--magical) / 0.15);
+      border-right-width: 4px;
+    }
+    .lecture-item.done { background: hsl(var(--primary) / 0.18); }
+    .complete-toggle { flex: 0 0 32px; width: 32px; height: 32px; border: 2px solid var(--border-color); border-radius: 6px; background: hsl(var(--card)); display: grid; place-items: center; cursor: pointer; transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; margin-inline-start: auto; }
+    .complete-toggle:hover { transform: scale(1.06); }
+    .complete-toggle:active { transform: scale(0.95); }
+    .complete-toggle.active { background: hsl(var(--primary)); border-color: hsl(var(--primary)); box-shadow: 0 8px 20px hsl(var(--primary) / 0.35); color: #fff; }
+    .complete-toggle.active::after { content: '✔'; font-size: 1rem; line-height: 1; }
+    .lecture-btn { background: transparent; border: 0; color: inherit; text-align: start; width: auto; flex: 1; cursor: pointer; font: inherit; }
+    .video-page { display: flex; flex-direction: column; gap: 2rem; }
+    .video-container { position: relative; background: black; }
+    .plyr video { width: 100%; height: auto; }
+    .video-details { background: var(--card-color); padding: 1.5rem; border-radius: 10px; text-align: center; }
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 200; }
+    .modal-content { background: var(--card-color); padding: 1.5rem; border-radius: 10px; text-align: center; position: relative; max-width: 300px; width: 90%; }
+    .modal-content img { width: 150px; height: 150px; border-radius: 50%; margin-bottom: 1rem; }
+    .modal-content a { display: inline-block; background: hsl(var(--primary)); color: #fff; padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; margin-top: 1rem; transition: 0.3s; }
+    .modal-content a:hover { opacity: 0.9; }
+    .close-modal { position: absolute; top: 0.5rem; left: 0.5rem; background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color); }
+    .teacher-nav { display: flex; overflow-x: auto; gap: 0.5rem; padding: 1rem 2rem; background: var(--card-color); margin: 0 auto; max-width: 1200px; border-radius: 0 0 15px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .teacher-nav-btn { flex-shrink: 0; padding: 0.75rem 1.5rem; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 25px; color: var(--text-color); text-decoration: none; transition: all 0.3s ease; white-space: nowrap; font-size: 0.9rem; cursor: pointer; }
+    .teacher-nav-btn:hover { background: hsl(var(--magical) / 0.1); border-color: hsl(var(--magical)); transform: translateY(-2px); }
+    .teacher-nav-btn.active { background: hsl(var(--magical)); color: white; border-color: hsl(var(--magical)); }
+    @media (max-width: 768px) { header { flex-direction: column; padding: 1rem; gap: 1rem; } .search-container { width: 100%; } .teachers-grid { flex-direction: column; } .teacher-card { min-width: auto; } .teacher-info { flex-direction: column; text-align: center; } .teacher-img { width: 150px; height: 150px; } .teacher-nav { padding: 1rem; margin: 0; border-radius: 0; } }
+  </style>
+</head>
+<body>  <div id="jsonViewer" style="display: none; background: var(--card-color); padding: 1rem; margin: 2rem; border-radius: 8px;">
+    <pre id="jsonContent" style="white-space: pre-wrap; word-wrap: break-word;"></pre>
+  </div>  <script type="text/babel">
+    // إدارة حفظ تقدم المستخدم
+    var completedLectures = JSON.parse(localStorage.getItem('completedLectures') || '{}');
+    function saveCompleted() {
+      localStorage.setItem('completedLectures', JSON.stringify(completedLectures));
+    }
+    function markLectureCompleted(url) {
+      if (!completedLectures[url]) {
+        completedLectures[url] = true;
+        saveCompleted();
+        if (currentTeacher) renderClasses(currentTeacher.classes);
+      }
+    }
+  </script>  <header>
+    <h1 class="site-title" onclick="navigate('home')">مـنـصـة DHS</h1>
+    <button id="themeToggle">تبديل الوضع</button>
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="ابحث عن مدرس...">
+      <button id="searchButton">بحث</button>
+    </div>
+  </header>  <div id="homePage" class="page active">
+    <div class="teachers-grid" id="teachersGrid"></div>
+    <div class="teacher-nav" id="teacherNav" style="display: none;"></div>
+  </div>  <div id="classesPage" class="page">
+    <div class="classes-page">
+      <button class="back-button" onclick="navigate('home')">← الرجوع للمدرسين</button>
+      <div class="teacher-info"><img id="teacherImage" class="teacher-img-lg" alt="صورة المدرس">
+        <div><h2 id="teacherName"></h2><p id="teacherSubject"></p></div></div>
+      <div class="classes-list" id="classesList"></div>
+    </div>
+  </div>  <div id="videoPage" class="page">
+    <div class="video-page">
+      <div class="video-container">
+        <video id="player" playsinline controls></video>
+      </div>
+      <div class="video-details"><h2 id="videoTitle"></h2><p id="videoDescription"></p>
+        <button class="back-button" onclick="navigate('classes')">العودة للفصول</button></div>
+    </div>
+  </div>  <div id="telegramModal" class="modal"><div class="modal-content">
+      <button class="close-modal" onclick="closeModal()">×</button>
+      <img src="https://www2.0zz0.com/2025/06/06/12/427823133.jpg" alt="قناة التليجرام">
+      <h3>اشترك في قناتنا على التليكرام</h3><p>تابع آخر التحديثات والمحتوى الجديد</p>
+      <a href="https://t.me/dhs_26" target="_blank">اذهب للقناة</a></div></div>  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>  <script src="https://cdn.plyr.io/3.7.2/plyr.polyfilled.js"></script>  <script type="text/babel">
+    function initializeTheme() {
+      var stored = localStorage.getItem('theme');
+      var theme = stored || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+    function updateThemeToggleLabel(){
+      var theme = document.documentElement.getAttribute('data-theme') || 'dark';
+      var btn = document.getElementById('themeToggle');
+      if(!btn) return;
+      if(theme === 'dark'){
+        btn.innerHTML = 'ليلي <span aria-hidden="true">🌙</span>';
+        btn.setAttribute('aria-label','الوضع الليلي');
+      } else {
+        btn.innerHTML = 'نهاري <span aria-hidden="true">☀️</span>';
+        btn.setAttribute('aria-label','الوضع النهاري');
+      }
+    }
+    initializeTheme();
+    updateThemeToggleLabel();
+    document.getElementById('themeToggle').addEventListener('click', function() {
+      var cur = document.documentElement.getAttribute('data-theme');
+      var next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      updateThemeToggleLabel();
+    });
 
-    <meta property="og:title" content="transfer-vault" />
-    <meta property="og:description" content="Lovable Generated Project" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    var hls;
+    var currentProvider = 'html5';
+    var player = new Plyr('#player', {
+      controls: ['play-large','rewind','play','fast-forward','progress','current-time','mute','volume','captions','settings','airplay','fullscreen'],
+      settings: ['quality','speed'],
+      quality: {
+        default: 0,
+        options: [0, 144, 240, 360, 480, 720, 1080], // Auto (0) + من أقل دقة إلى 1080p
+        forced: true,
+        onChange: function (q) {
+          applyQuality(q);
+          setTimeout(updateQualityMenuLabels, 0);
+        }
+      },
+      speed: { selected: 1, options: [0.5, 1, 1.25, 1.5, 2] },
+      seekTime: 10,
+      youtube: { noCookie: true, rel: 0, modestbranding: 1 }
+    });
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-  </head>
+    function applyQuality(q){
+      var quality = parseInt(q, 10);
+      if(isNaN(quality)) return;
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+      // Auto quality
+      if(quality === 0){
+        if(currentProvider === 'hls' && hls){
+          try{ hls.currentLevel = -1; hls.autoLevelEnabled = true; }catch(err){}
+        } else if(currentProvider === 'youtube'){
+          try{
+            if(player && player.embed && typeof player.embed.setPlaybackQuality === 'function'){
+              player.embed.setPlaybackQuality('default');
+            }
+          }catch(err){}
+        }
+        setTimeout(updateQualityMenuLabels, 0);
+        return;
+      }
+
+      if(currentProvider === 'hls' && hls){
+        try{
+          var levels = hls.levels || [];
+          if(levels.length){
+            var index = -1;
+            for(var i=0;i<levels.length;i++){ if((levels[i].height||0) === quality){ index = i; break; } }
+            if(index === -1){
+              var closest=-1, delta=Infinity;
+              for(var j=0;j<levels.length;j++){
+                var d = Math.abs((levels[j].height||0) - quality);
+                if(d < delta){ delta = d; closest = j; }
+              }
+              index = closest;
+            }
+            if(index !== -1){
+              hls.currentLevel = index;
+              hls.autoLevelEnabled = false;
+            }
+          }
+        }catch(err){ console.warn('HLS quality change error', err); }
+      } else if(currentProvider === 'youtube'){
+        try{
+          var map = {144:'tiny', 240:'small', 360:'medium', 480:'large', 720:'hd720', 1080:'hd1080'};
+          if(player && player.embed && typeof player.embed.setPlaybackQuality === 'function'){
+            var label = map[quality] || 'small';
+            player.embed.setPlaybackQuality(label);
+            if(typeof player.embed.setPlaybackQualityRange === 'function'){
+              player.embed.setPlaybackQualityRange([label]);
+            }
+          }
+        }catch(err){ console.warn('YouTube quality change error', err); }
+      } else {
+        // HTML5 MP4: لا تتوفر جودة إلا إذا كانت مصادر متعددة متاحة
+        console.info('Quality selection not supported for this source');
+      }
+    }
+
+    // Label '0' as 'Auto' in the Plyr quality menu
+    function updateQualityMenuLabels(){
+      try{
+        var items = document.querySelectorAll('.plyr__menu [role="menuitemradio"][value="0"]');
+        items.forEach(function(btn){ btn.textContent = 'Auto'; });
+        var badges = document.querySelectorAll('.plyr__menu__container [data-plyr="quality"] .plyr__menu__value');
+        badges.forEach(function(b){ var t=(b.textContent||'').trim(); if(t==='0p'||t==='0'){ b.textContent='Auto'; } });
+      }catch(_){/* ignore */}
+    }
+
+    // Double-tap/click to toggle fullscreen
+    function setupFullscreenToggleGestures(){
+      var container = (player && player.elements && player.elements.container) || document.querySelector('.plyr');
+      if(!container) return;
+      var lastTap = 0;
+      container.addEventListener('touchend', function(e){
+        if(e.target && e.target.closest && e.target.closest('.plyr__controls')) return;
+        var now = Date.now();
+        if(now - lastTap < 300){
+          e.preventDefault();
+          try{ player.fullscreen.toggle(); }catch(_){}
+        }
+        lastTap = now;
+      }, { passive: false });
+      container.addEventListener('dblclick', function(e){
+        if(e.target && e.target.closest && e.target.closest('.plyr__controls')) return;
+        try{ player.fullscreen.toggle(); }catch(_){}
+      });
+    }
+
+    // Spacebar toggles play/pause
+    function setupSpacebarPlayPause(){
+      document.addEventListener('keydown', function(e){
+        if(e.code === 'Space' || e.key === ' '){
+          var tag = (document.activeElement && document.activeElement.tagName || '').toLowerCase();
+          if(['input','textarea','select','button'].includes(tag)) return;
+          e.preventDefault();
+          try{ player.togglePlay(); }catch(_){}
+        }
+      });
+    }
+
+    // Initialize helpers
+    player.on('ready', function(){
+      applyQuality(0);
+      updateQualityMenuLabels();
+      setupFullscreenToggleGestures();
+    });
+    setupSpacebarPlayPause();
+
+    var pages={home:document.getElementById('homePage'),classes:document.getElementById('classesPage'),video:document.getElementById('videoPage')};
+    var teachersGrid=document.getElementById('teachersGrid');var searchInput=document.getElementById('searchInput');var searchButton=document.getElementById('searchButton');
+    var teachers=[],currentTeacher=null,currentClassIndex=0,currentLectureIndex=0,currentLectureLink='';
+
+    function isYouTubeUrl(u){return /(youtu\.be\/|youtube\.com\/(watch\?v=|embed\/|shorts\/))/i.test(u);}    
+    function getYouTubeId(u){
+      var m=u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{6,})/i);
+      return m?m[1]:null;
+    }
+    function navigate(page){window.scrollTo(0,0);if(page!=='video'){player.pause();if(hls){hls.destroy();hls=null;}}Object.keys(pages).forEach(function(k){pages[k].classList.remove('active');});pages[page].classList.add('active');}
+    function copyLectureLink(){if(!currentLectureLink)return;navigator.clipboard.writeText(currentLectureLink).then(function(){alert('تم نسخ رابط المحاضرة');}).catch(function(){alert('حدث خطأ أثناء النسخ');});}
+
+    function renderTeachers(list){
+      list=list||teachers;
+      if(!list.length){
+        teachersGrid.innerHTML='<p>لا يوجد نتائج مطابقة</p>';
+        document.getElementById('teacherNav').style.display='none';
+        return;
+      }
+      teachersGrid.innerHTML=list.map(function(t){
+        return '<div class="teacher-card" onclick="showTeacher(\''+t.id+'\')"><img src="'+t.image+'" alt="'+t.name+'" class="teacher-img"><h3 class="teacher-name">'+t.name+'</h3><p>'+t.subject+'</p></div>';
+      }).join('');
+      
+      // إنشاء شريط التنقل بين المدرسين
+      var teacherNav = document.getElementById('teacherNav');
+      if(list.length > 1){
+        teacherNav.innerHTML = list.map(function(t){
+          return '<button class="teacher-nav-btn" onclick="showTeacher(\''+t.id+'\')" data-teacher-id="'+t.id+'">'+t.name+'</button>';
+        }).join('');
+        teacherNav.style.display = 'flex';
+      } else {
+        teacherNav.style.display = 'none';
+      }
+    }
+    function showTeacher(id){
+      currentTeacher=teachers.find(function(t){return t.id==id;});
+      if(!currentTeacher)return;
+      
+      // تحديث حالة الأزرار النشطة في شريط التنقل
+      var navBtns = document.querySelectorAll('.teacher-nav-btn');
+      navBtns.forEach(function(btn){
+        if(btn.getAttribute('data-teacher-id') == id){
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      
+      document.getElementById('teacherImage').src=currentTeacher.image;
+      document.getElementById('teacherName').textContent=currentTeacher.name;
+      document.getElementById('teacherSubject').textContent=currentTeacher.subject;
+      renderClasses(currentTeacher.classes);
+      navigate('classes');
+    }
+    function renderClasses(classesData){
+      document.getElementById('classesList').innerHTML = classesData.map(function(cls, ci){
+        var lectures = cls.lectures.map(function(lec, li){
+          var done = !!completedLectures[lec.url];
+          var safeUrl = lec.url.replace(/'/g, "\\'");
+          var safeTitle = lec.title.replace(/'/g, "\\'");
+          var safeDesc = lec.description.replace(/'/g, "\\'");
+          return '<div class="lecture-item'+(done?' done':'')+'">'
+            + '<button type="button" class="lecture-btn" onclick="playVideo('+ci+','+li+',\''+safeUrl+'\',\''+safeTitle+'\',\''+safeDesc+'\')">'+(li+1)+'. '+lec.title+'</button>'
+            + '<button type="button" class="complete-toggle'+(done?' active':'')+'" onclick="toggleLecture(event, \''+safeUrl+'\')" aria-label="تأشير إنهاء المحاضرة" title="وضع علامة إنهاء"></button>'
+            + '</div>';
+        }).join('');
+        return '<div class="class-card">'
+          + '<div class="class-header" onclick="toggleLectures(this)"><h3>'+cls.name+'</h3><span>▼</span></div>'
+          + '<div class="lectures-list">'+lectures+'</div>'
+          + '</div>';
+      }).join('');
+    }
+    function toggleLecture(e, url){
+      e = e || window.event;
+      if(e && e.preventDefault) e.preventDefault();
+      if(e && e.stopPropagation) e.stopPropagation();
+      if(e && e.stopImmediatePropagation) e.stopImmediatePropagation();
+
+      var btn = (e && (e.currentTarget || e.target)) || null;
+      var item = btn && btn.closest ? btn.closest('.lecture-item') : null;
+      var isActive = btn && btn.classList.contains('active');
+
+      if(isActive){
+        delete completedLectures[url];
+        if(btn) btn.classList.remove('active');
+        if(item) item.classList.remove('done');
+      } else {
+        completedLectures[url] = true;
+        if(btn) btn.classList.add('active');
+        if(item) item.classList.add('done');
+      }
+
+      saveCompleted();
+      // لا نعيد رسم القوائم حتى لا تُطوى الأقسام المفتوحة
+      return false;
+    }
+    function toggleLectures(el){var list=el.parentElement.querySelector('.lectures-list');var arrow=el.querySelector('span');if(!list.style.display||list.style.display==='none'){list.style.display='grid';arrow.textContent='▲';}else{list.style.display='none';arrow.textContent='▼';}}
+    function playVideo(ci,li,url,title,desc){
+      currentClassIndex=ci;currentLectureIndex=li;currentLectureLink=url;
+      var video=document.getElementById('player');
+
+      if(isYouTubeUrl(url)){
+        var vid=getYouTubeId(url);
+        if(!vid){alert('رابط يوتيوب غير صالح');return;}
+        if(hls){hls.destroy();hls=null;}
+        currentProvider='youtube';
+        player.source={type:'video',sources:[{src:vid,provider:'youtube'}]};
+        player.play();
+        applyQuality(0);
+        setTimeout(updateQualityMenuLabels, 0);
+      } else if(url.endsWith('.m3u8')){
+        if(hls){hls.destroy();}
+        currentProvider='hls';
+        if(Hls.isSupported()){
+          hls=new Hls();
+          hls.loadSource(url);
+          hls.attachMedia(video);
+          hls.on(Hls.Events.MANIFEST_PARSED,function(){
+            player.play();
+            applyQuality(0);
+            updateQualityMenuLabels();
+          });
+        } else if(video.canPlayType('application/vnd.apple.mpegurl')){
+          video.src=url;
+          video.addEventListener('loadedmetadata',function(){player.play();});
+        } else {
+          alert('هذا المتصفح لا يدعم بث الفيديو بهذه الصيغة');
+          return;
+        }
+      } else {
+        currentProvider='html5';
+        player.source={type:'video',sources:[{src:url,type:'video/mp4'}]};
+        player.play();
+        applyQuality(0);
+        setTimeout(updateQualityMenuLabels, 0);
+      }
+      document.getElementById('videoTitle').textContent=title;
+      document.getElementById('videoDescription').textContent=desc;
+      navigate('video');
+    }
+    player.on('ended',function(){markLectureCompleted(currentLectureLink);var cls=currentTeacher.classes;var ci=currentClassIndex;var li=currentLectureIndex;if(li<cls[ci].lectures.length-1){li++;}else if(ci<cls.length-1){ci++;li=0;}else return;var next=cls[ci].lectures[li];playVideo(ci,li,next.url,next.title,next.description);});
+    function handleSearch(){var term=searchInput.value.trim().toLowerCase();renderTeachers(teachers.filter(function(t){return t.name.toLowerCase().includes(term)||t.subject.toLowerCase().includes(term);}));}
+    var searchTimeout;searchInput.addEventListener('input',function(){clearTimeout(searchTimeout);searchTimeout=setTimeout(handleSearch,300);});searchButton.addEventListener('click',handleSearch);
+    function loadData(){
+      var errorMsg = '<p class="error">حدث خطأ في تحميل البيانات</p>';
+      fetch('./data.json', { cache: 'no-store' })
+        .then(function(res){ if(!res.ok) throw new Error('فشل تحميل البيانات: ' + res.status); return res.json(); })
+        .then(function(data){ teachers = data.teachers || []; renderTeachers(); console.log('تم تحميل البيانات بنجاح'); })
+        .catch(function(error){
+          console.error('Data load error:', error);
+          teachersGrid.innerHTML = errorMsg + '\n<button onclick="location.reload()" style="margin-top:1rem;padding:0.5rem 1rem;background:hsl(var(--primary));color:#fff;border:none;border-radius:5px;">إعادة تحميل البيانات</button>';
+        });
+    }
+    function closeModal(){document.getElementById('telegramModal').style.display='none';}
+    document.addEventListener('contextmenu',function(e){e.preventDefault();});document.addEventListener('selectstart',function(e){e.preventDefault();});
+    loadData();
+  </script></body>
 </html>
