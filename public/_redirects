@@ -1,0 +1,5 @@
+# Netlify redirects file
+/*    /index.html   200
+
+# Handle data.json requests
+/data.json  /data.json  200

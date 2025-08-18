@@ -2,13 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { Lecture } from '@/types/platform';
 import { useProgress } from '@/hooks/useProgress';
+import Hls from 'hls.js';
 
-declare global {
-  interface Window {
-    Hls: any;
-    hls: any;
-  }
-}
+// Remove global declaration since we're importing HLS directly
 
 interface VideoPlayerProps {
   lecture: Lecture;
@@ -67,8 +63,8 @@ export const VideoPlayer = ({ lecture, onVideoEnd }: VideoPlayerProps) => {
     }
 
     function setupHLSPlayer() {
-      if (window.Hls && window.Hls.isSupported()) {
-        const hls = new window.Hls({
+      if (Hls.isSupported()) {
+        const hls = new Hls({
           enableWorker: true,
           lowLatencyMode: true,
           backBufferLength: 90
@@ -77,18 +73,21 @@ export const VideoPlayer = ({ lecture, onVideoEnd }: VideoPlayerProps) => {
         hls.loadSource(lecture.url);
         hls.attachMedia(video);
         
-        hls.on(window.Hls.Events.MANIFEST_PARSED, () => {
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
           setIsLoading(false);
           video.play().catch(console.error);
         });
         
-        hls.on(window.Hls.Events.ERROR, (event, data) => {
+        hls.on(Hls.Events.ERROR, (event, data) => {
           console.error('HLS Error:', data);
           if (data.fatal) {
             setError('خطأ في تحميل الفيديو');
             setIsLoading(false);
           }
         });
+        
+        // Store hls instance for cleanup
+        (video as any).hlsInstance = hls;
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         // Native HLS support (Safari)
         video.src = lecture.url;
@@ -122,8 +121,8 @@ export const VideoPlayer = ({ lecture, onVideoEnd }: VideoPlayerProps) => {
     
     return () => {
       video.removeEventListener('ended', handleVideoEnd);
-      if (window.hls) {
-        window.hls.destroy();
+      if ((video as any).hlsInstance) {
+        (video as any).hlsInstance.destroy();
       }
     };
   }, [lecture.url, markLectureCompleted, onVideoEnd]);
